@@ -1,0 +1,520 @@
+/* --- RESET & BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    overflow: hidden;
+    /* No scrolling */
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* --- BACKGROUND LAYERS --- */
+.bg-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 100%, #1a237e 0%, #0d1245 40%, #000000 90%);
+    z-index: 1;
+}
+
+canvas#starfield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    z-index: 2;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.lightning-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+.smoke-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+    z-index: 4;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.smoke-cloud {
+    position: absolute;
+    bottom: -50px;
+    width: 100%;
+    height: 300px;
+    background: radial-gradient(ellipse at center, rgba(62, 85, 172, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+    animation: floatSmoke 10s infinite alternate ease-in-out;
+    filter: blur(30px);
+}
+
+/* Bottom Yellow Glow Rise */
+.divine-rise-glow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 20vh;
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0) 70%);
+    filter: blur(40px);
+    z-index: 5;
+    animation: risePulse 6s infinite alternate ease-in-out;
+    pointer-events: none;
+}
+
+/* --- SCENE WRAPPER --- */
+#stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+/* --- SCENE 1: TEXT --- */
+.scene-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    text-align: center;
+    opacity: 0;
+    width: 100%;
+}
+
+.avl-symbol {
+    font-size: 3.5rem;
+    color: #00E5FF;
+    text-shadow:
+        0 0 15px rgba(0, 229, 255, 0.8),
+        0 0 30px rgba(0, 188, 212, 0.6);
+    display: block;
+    margin-bottom: 20px;
+}
+
+.om-symbol {
+    font-size: 5rem;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    display: block;
+    margin-bottom: 20px;
+}
+
+.main-title {
+    font-size: 4rem;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    background: linear-gradient(to right, #ffffff, #a5c9ff, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(66, 133, 244, 0.6);
+}
+
+.sub-title {
+    font-size: 2rem;
+    color: #aaa;
+    margin-top: 10px;
+    font-family: 'Great Vibes', cursive;
+}
+
+/* --- SCENE 2: MAHADEV REVEAL --- */
+.scene-mahadev {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Perfect Center */
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    z-index: 20;
+}
+
+.divine-aura-base {
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(0, 50, 200, 0.5) 0%, rgba(0, 10, 50, 0.2) 50%, rgba(0, 0, 0, 0) 75%);
+    border-radius: 50%;
+    z-index: -2;
+    filter: blur(40px);
+}
+
+.divine-aura-pulse {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(173, 216, 230, 0.3) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: pulseGlow 5s infinite ease-in-out;
+}
+
+.head-aura {
+    position: absolute;
+    top: 22%;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0) 70%);
+    border-radius: 50%;
+    z-index: 5;
+    filter: blur(10px);
+    animation: pulseGlow 4s infinite alternate ease-in-out;
+}
+
+.chakra-rotating {
+    position: absolute;
+    width: 550px;
+    height: 550px;
+    border: 1px dashed rgba(255, 215, 0, 0.15);
+    border-radius: 50%;
+    animation: rotateChakra 30s linear infinite;
+    z-index: -1;
+}
+
+.shiva-img {
+    max-height: 85vh;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 50px rgba(66, 133, 244, 0.7)) drop-shadow(0 0 100px rgba(0, 0, 255, 0.3));
+    z-index: 10;
+    transform-origin: center center;
+}
+
+/* Symmetrical Trishuls */
+.trishul-silhouette {
+    position: absolute;
+    height: 70vh;
+    opacity: 0.15;
+    z-index: 1;
+    filter: blur(3px) drop-shadow(0 0 20px gold);
+}
+
+.trishul-right {
+    right: 15%;
+}
+
+.trishul-left {
+    left: 15%;
+    transform: scaleX(-1);
+}
+
+/* Flower Rain Container */
+#flower-rain {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 25;
+    pointer-events: none;
+}
+
+.petal {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 25;
+}
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    pointer-events: none;
+}
+
+/* --- AUDIO BUTTON --- */
+.audio-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeInZoom {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+        filter: blur(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        filter: blur(0px);
+    }
+}
+
+@keyframes fadeOutBlur {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        filter: blur(0px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.1);
+        filter: blur(15px);
+    }
+}
+
+@keyframes mahadevReveal {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+        filter: brightness(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        filter: brightness(1.1);
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+}
+
+@keyframes risePulse {
+    0% {
+        opacity: 0.3;
+        height: 18vh;
+        transform: translateX(-50%) translateY(5px);
+    }
+
+    100% {
+        opacity: 0.6;
+        height: 22vh;
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
+@keyframes rotateChakra {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes floatSmoke {
+    0% {
+        transform: translateX(-20px);
+    }
+
+    100% {
+        transform: translateX(20px);
+    }
+}
+
+@keyframes lightning {
+    0% {
+        opacity: 0;
+    }
+
+    2% {
+        opacity: 0.6;
+    }
+
+    4% {
+        opacity: 0;
+    }
+
+    6% {
+        opacity: 0.3;
+    }
+
+    8% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(-150px) translateX(30px);
+        opacity: 0;
+    }
+}
+
+/* Petal Fall Keyframes */
+@keyframes petalFallLeft {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    90% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(40vw, 80vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@keyframes petalFallRight {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    90% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-40vw, 80vh) rotate(-720deg);
+        opacity: 0;
+    }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 2.2rem;
+    }
+
+    .shiva-img {
+        max-height: 65vh;
+    }
+
+    .divine-aura-base {
+        width: 400px;
+        height: 400px;
+    }
+
+    .divine-aura-pulse {
+        width: 350px;
+        height: 350px;
+    }
+
+    .chakra-rotating {
+        width: 320px;
+        height: 320px;
+    }
+
+    .trishul-silhouette {
+        height: 40vh;
+    }
+
+    .trishul-right {
+        right: 5%;
+    }
+
+    .trishul-left {
+        left: 5%;
+    }
+}
+
+/* --- UTILITY --- */
+.animate-text-in {
+    animation: fadeInZoom 1.5s forwards ease-out;
+}
+
+.animate-text-out {
+    animation: fadeOutBlur 1.2s forwards ease-in;
+}
+
+.animate-mahadev-in {
+    animation: mahadevReveal 3s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.trigger-lightning {
+    animation: lightning 2s linear;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 215, 0, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.hide-scene {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none;
+}
